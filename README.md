@@ -5,7 +5,7 @@ AWSEMTools
 [![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/AWSEMTools/branch/main/graph/badge.svg)](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/AWSEMTools/branch/main)
 
 
-Collection of tools used to analyze awsem simulations
+This module aggregates a collection of methods and tools used to analyze AWSEM simulations
 
 ### Copyright
 
