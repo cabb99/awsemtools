@@ -1,8 +1,8 @@
 AWSEMTools
 ==============================
 [//]: # (Badges)
-[![GitHub Actions Build Status](https://github.com/REPLACE_WITH_OWNER_ACCOUNT/awsemtools/workflows/CI/badge.svg)](https://github.com/REPLACE_WITH_OWNER_ACCOUNT/awsemtools/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/AWSEMTools/branch/main/graph/badge.svg)](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/AWSEMTools/branch/main)
+[![GitHub Actions Build Status](https://github.com/REPLACE_WITH_OWNER_ACCOUNT/awsemtools/workflows/CI/badge.svg)](https://github.com/cabb99/awsemtools/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/AWSEMTools/branch/main/graph/badge.svg)](https://codecov.io/gh/cabb99/AWSEMTools/branch/main)
 
 
 This module aggregates a collection of methods and tools used to analyze AWSEM simulations
