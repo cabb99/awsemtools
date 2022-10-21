@@ -15,10 +15,10 @@ def test_awsemtools_imported():
     assert "awsemtools" in sys.modules
 
 def test_q_value():
-    assert False
+    awsemtools.q_value()
 
 def test_strain_pca():
-    assert False
+    awsemtools.strain_pca()
 
 def test_coordinate_pca():
-    assert False
+    awsemtools.coordinate_pca()

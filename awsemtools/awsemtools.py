@@ -3,6 +3,9 @@
 import pyemma
 import prody
 
+from .compute import *
+
+
 def canvas(with_attribution=True):
     """
     Placeholder function to show example docstring (NumPy format).
