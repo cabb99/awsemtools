@@ -1,5 +1,7 @@
 """Provide the primary functions."""
 
+import pyemma
+import prody
 
 def canvas(with_attribution=True):
     """
