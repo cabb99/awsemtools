@@ -107,3 +107,5 @@ ENV/
 
 # In-tree generated files
 */_version.py
+awsemtools/tests/data/aligned.dcd
+.vscode/settings.json
