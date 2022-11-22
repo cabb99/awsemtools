@@ -163,6 +163,10 @@ class PCA():
     def eigenvalues(self):
         return self.pca.explained_variance_
 
+    
+    def eigenvalues(self):
+        return self.pca.explained_variance_
+
     @property
     def eigenvectors(self):
         return self.pca.components_
@@ -177,7 +181,7 @@ class PCA():
         centered_features=features-self.mean
         return self.pca.transform(centered_features)
 
-    def plot_projection(self,n_PC):
+    def plot_projection(self,n_PC=5):
         import seaborn as sns
         import pandas as pd
         data=pd.DataFrame(self.projection)
@@ -188,6 +192,9 @@ class PCA():
         data['PC']+=1
         return sns.relplot(data[data['PC']<=n_PC],x='frames',y='value',row='PC',kind="line",height=1,aspect=10, hue='PC', palette="crest")
 
+    def plot_explained_variance(self, n_PC):
+        raise NotImplemented
+    
     @classmethod
     def fit_coordinates(cls, trajectory,**args):
         def featurization_method(trajectory):
@@ -198,7 +205,18 @@ class PCA():
         pca.featurization_method=featurization_method
         return pca
 
+    def visualize_inside_notebook():
+        raise NotImplemented
 
+    @classmethod
+    def fit_strain(cls, trajectory,**args):
+        def featurization_method(trajectory):
+            s=trajectory.coords.shape
+            return trajectory.coords.reshape(s[0],-1)
+        features=featurization_method(trajectory)
+        pca=PCA(features,**args)
+        pca.featurization_method=featurization_method
+        return pca
 
         
 
