@@ -7,6 +7,11 @@ AWSEMTools
 
 This module aggregates a collection of methods and tools used to analyze AWSEM simulations
 
+### Installation
+
+
+
+
 ### Copyright
 
 Copyright (c) 2022, Carlos Bueno
