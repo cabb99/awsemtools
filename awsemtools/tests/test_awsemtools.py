@@ -23,28 +23,28 @@ def test_q_value():
     q_value.globalq()
 
 def test_trajectory():
-    trajectory=awt.Trajectory(pdb='awsemtools/tests/data/p65p50.pdb',dcd='awsemtools/tests/data/p65p50.dcd')
+    trajectory=awt.Trajectory(pdb_file='awsemtools/tests/data/p65p50.pdb',dcd_file='awsemtools/tests/data/p65p50.dcd')
     assert trajectory.coords.shape == (1000, 3073, 3)
 
 
 def test_trajectory_selection():
-    trajectory=awt.Trajectory(pdb='awsemtools/tests/data/p65p50.pdb',dcd='awsemtools/tests/data/p65p50.dcd')
+    trajectory=awt.Trajectory(pdb_file='awsemtools/tests/data/p65p50.pdb',dcd_file='awsemtools/tests/data/p65p50.dcd')
     trajectory.set_selection('name CA')
     print(trajectory.coords.shape) ==(1000, 615, 3)
 
 def test_trajectory_frames():
-    trajectory=awt.Trajectory(pdb='awsemtools/tests/data/p65p50.pdb',dcd='awsemtools/tests/data/p65p50.dcd')
+    trajectory=awt.Trajectory(pdb_file='awsemtools/tests/data/p65p50.pdb',dcd_file='awsemtools/tests/data/p65p50.dcd')
     trajectory.set_frames(stride=5)
     print(trajectory.coords.shape) == (200, 3073, 3)
 
 def test_trajectory_complex_selection():
-    trajectory=awt.Trajectory(pdb='awsemtools/tests/data/p65p50.pdb',dcd='awsemtools/tests/data/p65p50.dcd')
+    trajectory=awt.Trajectory(pdb_file='awsemtools/tests/data/p65p50.pdb',dcd_file='awsemtools/tests/data/p65p50.dcd')
     trajectory.set_selection('name CA')
     trajectory.set_frames(stride=5)
     print(trajectory.coords.shape) == (200, 615, 3)
 
 def test_trajectory_empty_selection():
-    trajectory=awt.Trajectory(pdb='awsemtools/tests/data/p65p50.pdb',dcd='awsemtools/tests/data/p65p50.dcd')
+    trajectory=awt.Trajectory(pdb_file='awsemtools/tests/data/p65p50.pdb',dcd_file='awsemtools/tests/data/p65p50.dcd')
     assert trajectory.indices.shape==(3073,)
     assert trajectory.frames.shape==(1000,)
     assert trajectory.coords.shape==(1000, 3073, 3)
