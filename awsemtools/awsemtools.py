@@ -3,7 +3,12 @@
 import pyemma
 import prody
 from sklearn.decomposition import PCA as sklearn_PCA
+from scipy.spatial import distance as sdist
 import numpy as np
+import nglview
+from nglview.sandbox.interpolate import smooth as ngl_smooth
+import numpy as np
+import pandas as pd
 
 
 from .compute import *
@@ -31,102 +36,32 @@ def canvas(with_attribution=True):
         quote += "\n\t- Adapted from Henry David Thoreau"
     return quote
 
-class PCA():
-    """Compute PCA on the alanine dipeptide trajectory."""
 
-    def __init__(self, pdb, dcd, selection='protein and name CA', start=0, stop = -1, stride = 1):
-        """Initialize the PCA object. """
-
-        self.pdb = prody.parsePDB(pdb)
-        self.dcd = prody.parseDCD(dcd)
-        self.selection=self.pdb.select(selection)
-        self.dcd.setAtoms(self.selection)
-
-        #Coordinates
-        self.coords=self.dcd[start:stop:stride].getCoordsets()
-
-        #PCA
-        s=self.coords.shape
-        self.features=self.coords.reshape(s[0],-1)
-        self.center=self.features.mean(axis=0)
-        centered_features=self.features-self.center
-
-        self.eigenvalues=pca.explained_variance_
-        self.eigenvectors=pca.components_
-        self.projection=pca.fit(centered_features)
-
-
-    def get_eigenvalues(self):
-        """Return the eigenvalues of the PCA object."""
-        return self.pca.getEigvals()
-
-    def get_eigenvectors(self):
-        """Return the eigenvectors of the PCA object."""
-        return self.pca.getEigvecs()
-
-    def get_variance(self):
-        """Return the variance of the PCA object."""
-        return self.pca.getVariances()
-
-    def get_mean(self):
-        """Return the mean of the PCA object."""
-        return self.traj.getMean()
-
-    def get_coordinates(self):
-        """Return the coordinates of the PCA object."""
-        return self.dcd.getCoords()
-
-    def get_covariance(self):
-        """Return the covariance of the PCA object."""
-        return self.pca.getCovariance()
-
-    def get_projection(self):
-        """Return the projection of the PCA object."""
-        return self.pca.getProjection()
-
-    # def get_transformed(self):
-    #     """Return the transformed coordinates of the PCA object."""
-    #     return self.pca.getTransformed()
-
-    # def get_transformed_coordinates(self):
-    #     """Return the transformed coordinates of the PCA object."""
-    #     return self.tpcaraj.getTransformedCoords()
-
-    # def get_transformed_variance(self):
-    #     """Return the transformed variance of the PCA object."""
-    #     return self.pca.getTransformedVariances()
-
-    # def get_transformed_eigenvalues(self):
-    #     """Return the transformed eigenvalues of the PCA object."""
-    #     return self.pca.getTransformedEigvals()
-
-    # def get_transformed_eigenvectors(self):
-    #     """Return the transformed eigenvectors of the PCA object."""
-    #     return self.pca.getTransformedEigvecs()
-
-    # def get_transformed_covariance(self):
-    #     """Return the transformed covariance of the PCA object."""
-    #     return self.pca.getTransformedCovariance()
-
-    # def get_transformed_projection(self):
-    #     """Return the transformed projection of the PCA object."""
-    #     return self.pca.getTransformedProjection()
-
-    # def get_cumulative_variance(self):
-    #     """Return the cumulative variance of the PCA object."""
-    #     return self.pca.getCumvar()
-
-class Structure():
-    pass
-
-class Trajectory():
+class Trajectory:
     
-    def __init__(self, pdb, dcd, selection='all', start=0, stop=-1, stride=1):
-        self.pdb = prody.parsePDB(pdb)
-        self.dcd = prody.parseDCD(dcd)
-        self.dcd.setAtoms(self.pdb.select('all'))
-        self.indices=self.pdb.select('all').getIndices()
+    def __init__(self, pdb_file, dcd_file, selection='all'):
+        self.pdb_file=pdb_file
+        self.dcd_file=dcd_file
+        
+        self.pdb = prody.parsePDB(pdb_file)
+        self.dcd = prody.parseDCD(dcd_file)
+        self.dcd.setCoords(self.pdb)
+        
+        self.reference=self.pdb.select(selection)
+        self.dcd.setAtoms(self.reference)
+        self.indices=self.reference.getIndices()
+        
         self.frames=np.arange(0,len(self.dcd))
+        self.features=pd.DataFrame(index=range(len(self.dcd)))
+
+    def copy(self):
+        cls=Trajectory(self.pdb_file,self.dcd_file)
+        cls.set_selection(indices=self.indices)
+        cls.set_frames(frames=self.frames)
+        return cls
+        
+    def superpose(self):
+        self.dcd.superpose()
 
     def set_selection(self,selection='all', indices=None):
         if indices is None:
@@ -136,19 +71,49 @@ class Trajectory():
             else:
                 indices=[]
         self.indices=np.array(indices)
+        self.reference=self.pdb.select(f"index {' '.join([str(i) for i in indices])}")
 
     def set_frames(self, start=0, stop=-1, stride=1, frames=None):
         if frames is None:
             frames=np.arange(0,len(self.dcd))[start:stop:stride]
         self.frames=np.array(frames)
     
+
+    def show_trajectory(self, smooth=0):
+        temp_dcd=self.dcd[0:1]
+        smooth_trajectory=ngl_smooth(self.dcd.getCoordsets(), method='savgol_filter', window_length=smooth, polyorder=3)
+        temp_dcd.addCoordset(smooth_trajectory)
+        temp_dcd.delCoordset(0)
+        temp_dcd._n_csets=len(temp_dcd.getCoordsets())
+        return nglview.show_prody(temp_dcd)
+
+    def show_structure(self):
+        return nglview.show_prody(self.pdb)
+
+    def compute_RMSD(self):
+        return self.dcd.getRMSDs()
+
+    def compute_RMSF(self):
+        return self.dcd.getRMSFs()
+
+    def compute_MSF(self):
+        return self.dcd.getMSFs()
+
+    def compute_qvalue(self, min_seq_sep=3, contact_threshold=9.5):
+        raise NotImplementedError
+        
+
+    def vmd(self):
+        import subprocess
+        return subprocess.Popen(['vmd', self.pdb_file, self.dcd_file], stdin=subprocess.PIPE)
+
     @property
     def coords(self):
         return self.dcd[self.frames].getCoordsets()[:,list(self.indices)]
 
 
-class PCA():
-    def __init__(self,features,**args):
+class PCA:
+    def __init__(self,features,featurization_method,**args):
         self.pca=sklearn_PCA(**args)
         self.features=features
         self.mean=self.features.mean(axis=0)
@@ -205,9 +170,6 @@ class PCA():
         pca.featurization_method=featurization_method
         return pca
 
-    def visualize_inside_notebook():
-        raise NotImplemented
-
     @classmethod
     def fit_strain(cls, trajectory,**args):
         def featurization_method(trajectory):
@@ -218,34 +180,15 @@ class PCA():
         pca.featurization_method=featurization_method
         return pca
 
-        
-
-class ContactPCA():
-    pass
-
-class StrainPCA():
-    pass
-
-
-
-def compute_pca():
-    """Compute PCA on the alanine dipeptide trajectory."""
-    traj = prody.parsePDB('alanine_dipeptide.pdb')
-    traj = prody.selectAtoms(traj, 'protein and name CA')
-    traj = prody.calcCoordsets(traj)
-    traj = prody.calcPCA(traj)
-    return traj
-
-def compute_rmsd():
-    """Computes the RMSD of a pdb trajectory"""
-    pdb = prody.parsePDB('alanine_dipeptide.pdb')
-    traj = prody.parseDCD('alanine_dipeptide.dcd')
-    traj = prody.selectAtoms(traj, 'protein and name CA')
-    rmsd_traj = prody.calcRMSD(traj, pdb)
-    return rmsd_traj
-    
-
-
+    @classmethod
+    def fit_contact(cls, trajectory,**args):
+        def featurization_method(trajectory):
+            s=trajectory.coords.shape
+            return trajectory.coords.reshape(s[0],-1)
+        features=featurization_method(trajectory)
+        pca=PCA(features,**args)
+        pca.featurization_method=featurization_method
+        return pca
 
 if __name__ == "__main__":
     # Do something if this file is invoked on its own
