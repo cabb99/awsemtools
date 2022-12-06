@@ -9,8 +9,22 @@ This module aggregates a collection of methods and tools used to analyze AWSEM s
 
 ### Installation
 
+This module is currently under development.
+To install the module clone it and run the following command
 
+```
+git clone https://github.com/cabb99/awsemtools.git
+cd awsemtools
+pip install -e .
+```
 
+### Updating the module
+
+To update the local installation, please go back to the installation folder and run:
+
+```
+git pull
+```
 
 ### Copyright
 
