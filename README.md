@@ -12,11 +12,12 @@ This module aggregates a collection of methods and tools used to analyze AWSEM s
 This module is currently under development.
 To install the module clone it and run the following command:
 You will need to have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed.
+The --user option is optional if you want to install the requirements in your local directory
 
 ```
 git clone https://github.com/cabb99/awsemtools.git
 cd awsemtools
-pip install -e .
+pip install --user -e .
 ```
 
 ### Updating the module

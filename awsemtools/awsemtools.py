@@ -113,15 +113,13 @@ class Trajectory:
 
 
 class PCA:
-    def __init__(self,features,featurization_method,**args):
+    def __init__(self,features,**args):
         self.pca=sklearn_PCA(**args)
         self.features=features
         self.mean=self.features.mean(axis=0)
         centered_features=self.features-self.mean
         self.pca.fit(centered_features)
-        def featurization_method(features):
-            return features
-        self.featurization_method=featurization_method
+
 
 
     @property
