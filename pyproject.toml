@@ -25,7 +25,7 @@ dependencies = [
     "pyemma",
     "prody",
     "nglviewer",
-    "ipywidgets<'8.0'"
+    "ipywidgets<8"
 ]
 
 # Update the urls once the hosting is set up.
