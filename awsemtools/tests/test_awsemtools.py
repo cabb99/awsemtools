@@ -8,19 +8,24 @@ import sys
 import pytest
 
 import awsemtools as awt
-
+import pandas as pd
 
 def test_awsemtools_imported():
     """Sample test, will always pass so long as import statement worked."""
     assert "awsemtools" in sys.modules
 
 def test_q_value():
-    qvalue = awt.q_value('awsemtools/tests/data/p65p50.pdb','awsemtools/tests/data/p65p50.dcd', type='wolynes')
-
-    q_value.monomer() #multiple values
-    q_value.interface() #multiple interfaces
-    q_relative('awsemtools/tests/data/p65p50.pdb')
-    q_value.globalq()
+    trajectory = awt.Trajectory(pdb_file='awsemtools/tests/data/1r69_folding/native.pdb',dcd_file='awsemtools/tests/data/1r69_folding/movie.dcd')
+    qc = awt.q_value(trajectory, 'awsemtools/tests/data/1r69_folding/crystal_structure.pdb', contact_threshold=None)
+    qs = qc.sum(axis=(1,2))
+    q_sample=pd.read_csv('awsemtools/tests/data/1r69_folding/info.dat',delim_whitespace=True)['Q']
+    assert ((q_sample-qs)**2<0.01**2).all()
+    
+    #qvalue = awt.q_value('awsemtools/tests/data/p65p50.pdb','awsemtools/tests/data/p65p50.dcd', type='wolynes')
+    #q_value.monomer() #multiple values
+    #q_value.interface() #multiple interfaces
+    #q_relative('awsemtools/tests/data/p65p50.pdb')
+    #q_value.globalq()
 
 def test_trajectory():
     trajectory=awt.Trajectory(pdb_file='awsemtools/tests/data/p65p50.pdb',dcd_file='awsemtools/tests/data/p65p50.dcd')
